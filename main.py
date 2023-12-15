@@ -242,7 +242,6 @@ def _terms_of_service_1():
 
 
 def _terms_of_service_2():
-
     st.title("תנאי שימוש")
     cols = st.columns((4, 10, 4))
     with cols[1]:
@@ -475,26 +474,29 @@ def _display_terms_of_service():
         </style>
         """, unsafe_allow_html=True
     )
-    match st.session_state.terms_of_service_num:
-        case 1:
-            _terms_of_service_1()
-        case 2:
-            _terms_of_service_2()
-        case 3:
-            _terms_of_service_3()
+    if st.session_state.terms_of_service_num == 1:
+        _terms_of_service_1()
+    elif st.session_state.terms_of_service_num == 2:
+        _terms_of_service_2()
+    else:
+        _terms_of_service_3()
+
     cols = st.columns((4, 10, 4))
     with cols[1]:
         st.session_state.location_access = st.radio(label='אני נותן לאפליקציה "תכנונידע" גישה למיקום המכשיר שלי',
                                                     options=["בזמן השימוש באפליקציה", "רק הפעם", "אין אישור"])
         st.session_state.contact_access = st.radio(label='אני נותן לאפליקציה "תכנונידע" גישה לאנשי הקשר שלי',
-                                                    options=["בזמן השימוש באפליקציה", "רק הפעם", "אין אישור"])
+                                                   options=["בזמן השימוש באפליקציה", "רק הפעם", "אין אישור"])
         st.session_state.camera_access = st.radio(label='אני נותן לאפליקציה "תכנונידע" גישה למצלמה שלי',
-                                                    options=["בזמן השימוש באפליקציה", "רק הפעם", "אין אישור"])
-        st.session_state.cookies = st.radio(label='אנו משתמשים בקובצי Cookie כדי לאפשר לאתר שלנו לפעול כהלכה, להתאים אישית תוכן ומודעות וכמובן את לוח הסטודנט שלך. בנוסף, אנו משתפים מידע אודות השימוש שלך באתר שלנו עם שותפינו העסקיים.',
-                                                    options=["קבל את כל קבצי ה-Cookie", "בצע הגדרות אישיות של קובצי ה-Cookie", "דחה הכל(במידה ולא תאשר את הקבצים הדבר יפגע באיכות השירות שתקבל)"])
+                                                  options=["בזמן השימוש באפליקציה", "רק הפעם", "אין אישור"])
+        st.session_state.cookies = st.radio(
+            label='אנו משתמשים בקובצי Cookie כדי לאפשר לאתר שלנו לפעול כהלכה, להתאים אישית תוכן ומודעות וכמובן את לוח הסטודנט שלך. בנוסף, אנו משתפים מידע אודות השימוש שלך באתר שלנו עם שותפינו העסקיים.',
+            options=["קבל את כל קבצי ה-Cookie", "בצע הגדרות אישיות של קובצי ה-Cookie",
+                     "דחה הכל(במידה ולא תאשר את הקבצים הדבר יפגע באיכות השירות שתקבל)"])
         if st.session_state.get("advertisements") is None:
             st.session_state.advertisements = False
-        st.session_state.advertisements = st.checkbox("אני מעוניין שהאפליקציה תשלח לי הצעות פרסומיות אשר תואמות את העדפותיי")
+        st.session_state.advertisements = st.checkbox(
+            "אני מעוניין שהאפליקציה תשלח לי הצעות פרסומיות אשר תואמות את העדפותיי")
         if st.session_state.get("terms_of_service") is None:
             st.session_state.terms_of_service = False
         st.session_state.terms_of_service = st.checkbox("קראתי והסכמתי לתנאי השימוש")
@@ -542,11 +544,17 @@ def _finish(accepted: bool):
 
 def app_installation():
     start_timer(4)
+    # st.markdown("""
+    #     button{
+    #         fonti
+    #     }
+    # """, unsafe_allow_html=True)
     st.title("התקנת האפליקציה")
-    cols = st.columns((4, 10, 4))
-    with cols[1]:
-        st.button("התקן את האפליקציה", on_click=_finish, args=(True,))
-        st.button("המשך", on_click=_finish, args=(False,))
+    cols = st.columns(11)
+    with cols[4]:
+        st.button("התקנת האפליקציה", on_click=_finish, args=(True,))
+    with cols[5]:
+        st.button("אינני מעוניין להמשיך", on_click=_finish, args=(False,))
 
     st.markdown(
         """
@@ -568,17 +576,33 @@ def app_installation():
 
 
 def get_page(page_num: int) -> callable:
-    match page_num:
-        case 1:
-            return landing_page
-        case 2:
-            return description_page
-        case 3:
-            return terms_of_service
-        case 4:
-            return app_installation
+    if page_num == 1:
+        return landing_page
+    elif page_num == 2:
+        return description_page
+    elif page_num == 3:
+        return terms_of_service
+    else:
+        return app_installation
 
 
 if __name__ == '__main__':
     st.set_page_config(layout='wide')
+    streamlit_style = """
+    			<style>
+    			@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;700&display=swap');
+
+    			html, body, [class*="css"], h1, div, p, label, button  {
+    			font-family: 'Heebo', sans-serif;
+    			}
+    			// prevents from scrolling when clicking
+    			*, ::before, ::after {
+                    box-sizing: inherit;
+                }
+    			</style>
+    			"""
+    st.markdown(streamlit_style, unsafe_allow_html=True)
+    cols = st.columns(5)
+    with cols[2]:
+        st.image("logo.jpeg", width=300)
     get_page(st.session_state.get("page_num", 1))()
