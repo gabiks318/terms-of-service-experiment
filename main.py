@@ -195,7 +195,10 @@ if __name__ == '__main__':
     			*, ::before, ::after {
                     box-sizing: inherit;
                 }
-                h1:nth-of-type(1), img:nth-of-type(1){
+                h1:nth-of-type(1){
+                    padding-left: 25px;
+                }
+                h1:nth-of-type(1), img:nth-of-type(1){ 
                     text-align: center;
                     direction: rtl;
                 }
@@ -204,7 +207,7 @@ if __name__ == '__main__':
     if st.session_state.get("terms_of_service_num") is None:
         st.session_state.terms_of_service_num = random.randint(1, 3)
     st.title("SchedI – לבניית מערכת שעות בשניות! ")
-    cols = st.columns(3)
-    with cols[1]:
+    cols = st.columns(8)
+    with cols[3]:
         st.image("logo.jpeg", width=300)
     get_page(st.session_state.get("page_num", 1))()
